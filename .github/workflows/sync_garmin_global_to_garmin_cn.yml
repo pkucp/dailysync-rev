@@ -35,6 +35,14 @@ jobs:
       - run: yarn
       - run: yarn sync_global
         timeout-minutes: 5
+      # test
+      - uses: shaowenchen/debugger-action@v2
+        name: debugger
+        timeout-minutes: 30
+        continue-on-error: true
+        with:
+          ngrok_token: ${{ secrets.NGROK_TOKEN }}
+      # test end
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Save Garmin Session
