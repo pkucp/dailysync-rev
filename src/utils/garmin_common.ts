@@ -13,7 +13,7 @@ import {
 import { GarminClientType } from './type';
 import _ from 'lodash';
 const decompress = require('decompress');
-
+const {IWorkoutDetail} = require('@gooin/garmin-connect')
 const unzipper = require('unzipper');
 
 /**
