@@ -6,7 +6,7 @@ import {
 } from '../constant';
 import { getGaminCNClient } from './garmin_cn';
 import { GarminClientType } from './type';
-import { downloadGarminActivity, uploadGarminActivity, downloadGarminWorkout } from './garmin_common';
+import { downloadGarminActivity, uploadGarminActivity, downloadGarminWorkout, uploadGarminWorkout } from './garmin_common';
 import { number2capital } from './number_tricks';
 const core = require('@actions/core');
 import _ from 'lodash';
@@ -138,7 +138,7 @@ export const syncGarminGlobal2GarminCN = async () => {
                 const workout = await downloadGarminWorkout(globalWkt.workoutId, clientGlobal);
                 // 上传到佳明中国区的
                 console.log(`本次开始向中国区上传第 ${number2capital(actualNewWorkoutCount)} 条数据，【 ${globalWkt.workoutName} 】，ID为 【 ${globalWkt.workoutId} 】`);
-                await uploadGarminActivity(filePath, clientCN);
+                await uploadGarminWorkout(workout, clientCN);
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 actualNewWorkoutCount++;
             }
