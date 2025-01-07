@@ -6,7 +6,7 @@ import {
 } from '../constant';
 import { getGaminCNClient } from './garmin_cn';
 import { GarminClientType } from './type';
-import { downloadGarminActivity, uploadGarminActivity } from './garmin_common';
+import { downloadGarminActivity, uploadGarminActivity, downloadGarminWorkout } from './garmin_common';
 import { number2capital } from './number_tricks';
 const core = require('@actions/core');
 import _ from 'lodash';
@@ -96,8 +96,14 @@ export const syncGarminGlobal2GarminCN = async () => {
     const cnActs = await clientCN.getActivities(0, 1);
     let globalActs = await clientGlobal.getActivities(0, Number(GARMIN_SYNC_NUM));
 
+    const cnWkts = await clientCN.getWorkouts(0,1);
+    let globalWkts = await clientGlobal.getWorkouts(0, Number(GARMIN_SYNC_NUM));
+
     const latestGlobalActStartTime = globalActs[0]?.startTimeLocal ?? '0';
     const latestCnActStartTime = cnActs[0]?.startTimeLocal ?? '0';
+
+    const latestGlobalWktId = globalWkts[0]?.workoutId ?? '0';
+    const latestCnWktId = cnWkts[0]?.workoutId ?? '0';
 
     if (latestCnActStartTime === latestGlobalActStartTime) {
         console.log(`没有要同步的活动内容, 最近的活动:  【 ${globalActs[0]?.activityName} 】, 开始于: 【 ${latestGlobalActStartTime} 】`);
@@ -115,6 +121,26 @@ export const syncGarminGlobal2GarminCN = async () => {
                 await uploadGarminActivity(filePath, clientCN);
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 actualNewActivityCount++;
+            }
+        }
+    }
+
+    if (latestCnWktId === latestGlobalWktId) {
+        console.log(`没有要同步的训练计划, 最近的训练计划:  【 ${globalWkts[0]?.workoutName} 】, ID: 【 ${latestGlobalWktId} 】`);
+    } else {
+        // fix: #18
+        _.reverse(globalWkts);
+        let actualNewWorkoutCount = 1;
+        for (let i = 0; i < globalWkts.length; i++) {
+            const globalWkt = globalWkts[i];
+            if (globalWkt.workoutId > latestCnWktId) {
+                // 下载佳明原始数据
+                const workout = await downloadGarminWorkout(globalWkt.workoutId, clientGlobal);
+                // 上传到佳明中国区的
+                console.log(`本次开始向中国区上传第 ${number2capital(actualNewWorkoutCount)} 条数据，【 ${globalWkt.workoutName} 】，ID为 【 ${globalWkt.workoutId} 】`);
+                await uploadGarminActivity(filePath, clientCN);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                actualNewWorkoutCount++;
             }
         }
     }

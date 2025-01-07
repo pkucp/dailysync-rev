@@ -53,6 +53,24 @@ export const downloadGarminActivity = async (activityId, client: GarminClientTyp
     return path;
 };
 
+export const downloadGarminWorkout = async (workoutId, client: GarminClientType): Promise<IWorkoutDetail> => {
+    // const workout = await client.getWorkouts({ workoutId: workoutId });
+    const workoutDetail = await client.getWorkoutDetail(workoutId);
+    
+    console.log('downloadGarminWorkout - ID:', workoutId)
+    return workoutDetail;
+};
+
+export const uploadGarminWorkout = async (workoutDetail: IWorkoutDetail, client: GarminClientType): Promise<void> => {
+    
+    try {
+        const upload = await client.addWorkout(workoutDetail);
+        console.log('upload to garmin workout', upload);
+    } catch (error) {
+        console.log('upload to garmin workout error', error);
+    }
+};
+
 export const getGarminStatistics = async (client: GarminClientType): Promise<Record<string, any>> => {
     // Get a list of default length with most recent activities
     const acts = await client.getActivities(0, 10);
