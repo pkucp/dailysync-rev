@@ -10,10 +10,11 @@ import {
     GARMIN_URL_DEFAULT,
     GARMIN_USERNAME_DEFAULT,
 } from '../constant';
-import { GarminClientType } from './type';
+import { GarminClientType, WktDetail } from './type';
 import _ from 'lodash';
 const decompress = require('decompress');
-const {IWorkoutDetail} = require('@gooin/garmin-connect')
+
+
 const unzipper = require('unzipper');
 
 /**
@@ -53,7 +54,7 @@ export const downloadGarminActivity = async (activityId, client: GarminClientTyp
     return path;
 };
 
-export const downloadGarminWorkout = async (workoutId, client: GarminClientType): Promise<IWorkoutDetail> => {
+export const downloadGarminWorkout = async (workoutId, client: GarminClientType): Promise<WktDetail> => {
     // const workout = await client.getWorkouts({ workoutId: workoutId });
     const workoutDetail = await client.getWorkoutDetail(workoutId);
     
@@ -61,7 +62,7 @@ export const downloadGarminWorkout = async (workoutId, client: GarminClientType)
     return workoutDetail;
 };
 
-export const uploadGarminWorkout = async (workoutDetail: IWorkoutDetail, client: GarminClientType): Promise<void> => {
+export const uploadGarminWorkout = async (workoutDetail: WktDetail, client: GarminClientType): Promise<void> => {
     
     try {
         const upload = await client.addWorkout(workoutDetail);
