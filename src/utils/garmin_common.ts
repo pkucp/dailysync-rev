@@ -56,6 +56,7 @@ export const downloadGarminActivity = async (activityId, client: GarminClientTyp
 
 export const downloadGarminWorkout = async (workoutId, client: GarminClientType): Promise<WktDetail> => {
     // const workout = await client.getWorkouts({ workoutId: workoutId });
+    console.log('downloadGarminWorkout - ID:', workoutId)
     const workoutDetail = await client.getWorkoutDetail(workoutId);
     
     console.log('downloadGarminWorkout - ID:', workoutId)
