@@ -133,6 +133,7 @@ export const syncGarminGlobal2GarminCN = async () => {
         let actualNewWorkoutCount = 1;
         for (let i = 0; i < globalWkts.length; i++) {
             const globalWkt = globalWkts[i];
+            console.log(globalWkt);
             if (globalWkt.workoutId > latestCnWktId) {
                 // 下载佳明原始数据
                 const workout = await downloadGarminWorkout(globalWkt.workoutId, clientGlobal);
